@@ -1,0 +1,239 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}RH Pro Max - Human Resources Management{% endblock %}
+
+{% block header %}
+<!-- Hero/Carousel Start -->
+<div class="container-fluid position-relative p-0">
+    <div class="header-carousel owl-carousel">
+        <div class="header-carousel-item">
+            <img src="{{ asset('img/carousel-1.jpg') }}" class="img-fluid w-100" alt="Image">
+            <div class="carousel-caption">
+                <div class="container">
+                    <div class="row gy-0 gx-5">
+                        <div class="col-lg-0 col-xl-5"></div>
+                        <div class="col-xl-7 animated fadeInLeft">
+                            <div class="text-sm-center text-md-end">
+                                <h4 class="text-primary text-uppercase fw-bold mb-4">Welcome To RH Pro Max</h4>
+                                <h1 class="display-4 text-uppercase text-white mb-4">Complete HR Management Solution</h1>
+                                <p class="mb-5 fs-5">Streamline your human resources operations with our comprehensive management system. Manage employees, skills, job offers, and recruitment processes efficiently.
+                                </p>
+                                <div class="d-flex justify-content-center justify-content-md-end flex-shrink-0 mb-4">
+                                    <a class="btn btn-light rounded-pill py-3 px-4 px-md-5 me-2" href="{{ path('app_user_index') }}"><i class="fas fa-users me-2"></i> View Employees</a>
+                                    <a class="btn btn-primary rounded-pill py-3 px-4 px-md-5 ms-2" href="{{ path('app_job_offer_index') }}">Job Offers</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="header-carousel-item">
+            <img src="{{ asset('img/carousel-2.jpg') }}" class="img-fluid w-100" alt="Image">
+            <div class="carousel-caption">
+                <div class="container">
+                    <div class="row g-5">
+                        <div class="col-12 animated fadeInUp">
+                            <div class="text-center">
+                                <h4 class="text-primary text-uppercase fw-bold mb-4">Recruitment Made Easy</h4>
+                                <h1 class="display-4 text-uppercase text-white mb-4">Find the best talent for your team</h1>
+                                <p class="mb-5 fs-5">Track candidates, manage applications, and streamline your hiring process from start to finish.
+                                </p>
+                                <div class="d-flex justify-content-center flex-shrink-0 mb-4">
+                                    <a class="btn btn-light rounded-pill py-3 px-4 px-md-5 me-2" href="{{ path('app_candidate_profile_index') }}"><i class="fas fa-user-tie me-2"></i> View Candidates</a>
+                                    <a class="btn btn-primary rounded-pill py-3 px-4 px-md-5 ms-2" href="{{ path('app_skill_index') }}">Skills Database</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Hero/Carousel End -->
+{% endblock %}
+
+{% block body %}
+<!-- Statistics Start -->
+<div class="container-fluid counter py-5">
+    <div class="container py-5">
+        <div class="row g-5">
+            <div class="col-md-6 col-lg-6 col-xl-3 wow fadeInUp" data-wow-delay="0.2s">
+                <div class="counter-item">
+                    <div class="counter-item-icon mx-auto">
+                        <i class="fas fa-users fa-2x"></i>
+                    </div>
+                    <h4 class="my-4">Total Employees</h4>
+                    <div class="counter-counting">
+                        <span class="fs-2 fw-bold" data-toggle="counter-up">{{ employeeCount }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-6 col-xl-3 wow fadeInUp" data-wow-delay="0.4s">
+                <div class="counter-item">
+                    <div class="counter-item-icon mx-auto">
+                        <i class="fas fa-briefcase fa-2x"></i>
+                    </div>
+                    <h4 class="my-4">Job Offers</h4>
+                    <div class="counter-counting">
+                        <span class="fs-2 fw-bold" data-toggle="counter-up">{{ jobOfferCount }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-6 col-xl-3 wow fadeInUp" data-wow-delay="0.6s">
+                <div class="counter-item">
+                    <div class="counter-item-icon mx-auto">
+                        <i class="fas fa-user-tie fa-2x"></i>
+                    </div>
+                    <h4 class="my-4">Candidates</h4>
+                    <div class="counter-counting">
+                        <span class="fs-2 fw-bold" data-toggle="counter-up">{{ candidateCount }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-6 col-xl-3 wow fadeInUp" data-wow-delay="0.8s">
+                <div class="counter-item">
+                    <div class="counter-item-icon mx-auto">
+                        <i class="fas fa-cogs fa-2x"></i>
+                    </div>
+                    <h4 class="my-4">Skills Tracked</h4>
+                    <div class="counter-counting">
+                        <span class="fs-2 fw-bold" data-toggle="counter-up">{{ skillCount }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Statistics End -->
+
+{% if recentJobOffers|length > 0 %}
+<!-- Recent Job Offers Start -->
+<div class="container-fluid bg-light py-5">
+    <div class="container py-5">
+        <div class="text-center mx-auto pb-5 wow fadeInUp" data-wow-delay="0.2s" style="max-width: 800px;">
+            <h4 class="text-primary">Recruitment</h4>
+            <h1 class="display-5 mb-4">Recent Job Offers</h1>
+        </div>
+        <div class="row g-4">
+            {% for job in recentJobOffers %}
+            <div class="col-md-6 col-lg-4 wow fadeInUp" data-wow-delay="0.{{ loop.index }}s">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title text-primary">{{ job.title }}</h5>
+                        <p class="card-text">
+                            <i class="fas fa-map-marker-alt text-muted me-2"></i>{{ job.location }}<br>
+                            <i class="fas fa-calendar text-muted me-2"></i>{{ job.createdAt|date('M d, Y') }}<br>
+                            <span class="badge bg-{{ job.status.value == 'OPEN' ? 'success' : 'secondary' }}">{{ job.status.value }}</span>
+                        </p>
+                        <p class="card-text text-truncate">{{ job.description }}</p>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <a href="{{ path('app_job_offer_show', {'id': job.id}) }}" class="btn btn-primary rounded-pill">View Details</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-4">
+            <a href="{{ path('app_job_offer_index') }}" class="btn btn-primary rounded-pill py-3 px-5">View All Job Offers</a>
+        </div>
+    </div>
+</div>
+<!-- Recent Job Offers End -->
+{% endif %}
+<!-- Services Start -->
+<div class="container-fluid service pb-5">
+    <div class="container pb-5">
+        <div class="text-center mx-auto pb-5 wow fadeInUp" data-wow-delay="0.2s" style="max-width: 800px;">
+            <h4 class="text-primary">Our Features</h4>
+            <h1 class="display-5 mb-4">Complete HR Management Solution</h1>
+            <p class="mb-0">RH Pro Max provides all the tools you need to manage your human resources effectively.
+            </p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-4 wow fadeInUp" data-wow-delay="0.2s">
+                <div class="service-item">
+                    <div class="service-img">
+                        <img src="{{ asset('img/service-1.jpg') }}" class="img-fluid rounded-top w-100" alt="Image">
+                    </div>
+                    <div class="rounded-bottom p-4">
+                        <a href="{{ path('app_user_index') }}" class="h4 d-inline-block mb-4">Employee Management</a>
+                        <p class="mb-4">Track employee information, departments, job titles, and hire dates. Maintain a complete database of your workforce.
+                        </p>
+                        <a class="btn btn-primary rounded-pill py-2 px-4" href="{{ path('app_user_index') }}">Manage Employees</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 wow fadeInUp" data-wow-delay="0.4s">
+                <div class="service-item">
+                    <div class="service-img">
+                        <img src="{{ asset('img/service-2.jpg') }}" class="img-fluid rounded-top w-100" alt="Image">
+                    </div>
+                    <div class="rounded-bottom p-4">
+                        <a href="{{ path('app_skill_index') }}" class="h4 d-inline-block mb-4">Skills Tracking</a>
+                        <p class="mb-4">Manage employee skills, experience levels, and expertise. Track skill categories and competencies across your organization.
+                        </p>
+                        <a class="btn btn-primary rounded-pill py-2 px-4" href="{{ path('app_skill_index') }}">View Skills</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 wow fadeInUp" data-wow-delay="0.6s">
+                <div class="service-item">
+                    <div class="service-img">
+                        <img src="{{ asset('img/service-3.jpg') }}" class="img-fluid rounded-top w-100" alt="Image">
+                    </div>
+                    <div class="rounded-bottom p-4">
+                        <a href="{{ path('app_job_offer_index') }}" class="h4 d-inline-block mb-4">Job Offers</a>
+                        <p class="mb-4">Create and manage job postings. Track open positions, closing dates, and associate candidates with opportunities.
+                        </p>
+                        <a class="btn btn-primary rounded-pill py-2 px-4" href="{{ path('app_job_offer_index') }}">Job Offers</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 wow fadeInUp" data-wow-delay="0.2s">
+                <div class="service-item">
+                    <div class="service-img">
+                        <img src="{{ asset('img/service-4.jpg') }}" class="img-fluid rounded-top w-100" alt="Image">
+                    </div>
+                    <div class="rounded-bottom p-4">
+                        <a href="{{ path('app_candidate_profile_index') }}" class="h4 d-inline-block mb-4">Candidate Tracking</a>
+                        <p class="mb-4">Manage candidate profiles, track their status through the recruitment pipeline, and store CVs and documents.
+                        </p>
+                        <a class="btn btn-primary rounded-pill py-2 px-4" href="{{ path('app_candidate_profile_index') }}">View Candidates</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 wow fadeInUp" data-wow-delay="0.4s">
+                <div class="service-item">
+                    <div class="service-img">
+                        <img src="{{ asset('img/service-5.jpg') }}" class="img-fluid rounded-top w-100" alt="Image">
+                    </div>
+                    <div class="rounded-bottom p-4">
+                        <a href="{{ path('app_skill_category_index') }}" class="h4 d-inline-block mb-4">Skill Categories</a>
+                        <p class="mb-4">Organize skills into categories for better management. Define technical, soft skills, and specialized competencies.
+                        </p>
+                        <a class="btn btn-primary rounded-pill py-2 px-4" href="{{ path('app_skill_category_index') }}">Categories</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 wow fadeInUp" data-wow-delay="0.6s">
+                <div class="service-item">
+                    <div class="service-img">
+                        <img src="{{ asset('img/service-6.jpg') }}" class="img-fluid rounded-top w-100" alt="Image">
+                    </div>
+                    <div class="rounded-bottom p-4">
+                        <a href="#" class="h4 d-inline-block mb-4">Reports & Analytics</a>
+                        <p class="mb-4">Get insights into your HR data. Track hiring metrics, employee distribution, and skill gaps across the organization.
+                        </p>
+                        <a class="btn btn-primary rounded-pill py-2 px-4" href="#">Coming Soon</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Services End -->
+
+{% endblock %}

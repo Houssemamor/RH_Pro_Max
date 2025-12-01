@@ -1,0 +1,79 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Login - RH Pro Max{% endblock %}
+
+{% block header %}
+<!-- Header Start -->
+<div class="container-fluid bg-breadcrumb">
+    <div class="container text-center py-5" style="max-width: 900px;">
+        <h4 class="text-white display-4 mb-4 wow fadeInDown" data-wow-delay="0.1s">Login</h4>
+        <ol class="breadcrumb d-flex justify-content-center mb-0 wow fadeInDown" data-wow-delay="0.3s">
+            <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Home</a></li>
+            <li class="breadcrumb-item active text-primary">Login</li>
+        </ol>
+    </div>
+</div>
+<!-- Header End -->
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid py-5">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-5">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white text-center">
+                        <h4 class="mb-0"><i class="fas fa-sign-in-alt me-2"></i>Sign In</h4>
+                    </div>
+                    <div class="card-body p-4">
+                        {% if error %}
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <i class="fas fa-exclamation-circle me-2"></i>{{ error.messageKey|trans(error.messageData, 'security') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endif %}
+
+                        <form method="post">
+                            <div class="mb-3">
+                                <label for="inputEmail" class="form-label">
+                                    <i class="fas fa-envelope text-primary me-1"></i>Email Address
+                                </label>
+                                <input type="email" value="{{ last_username }}" name="email" id="inputEmail" 
+                                       class="form-control" placeholder="Enter your email" required autofocus>
+                            </div>
+                            <div class="mb-3">
+                                <label for="inputPassword" class="form-label">
+                                    <i class="fas fa-lock text-primary me-1"></i>Password
+                                </label>
+                                <input type="password" name="password" id="inputPassword" 
+                                       class="form-control" placeholder="Enter your password" required>
+                            </div>
+
+                            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="rememberMe" name="_remember_me">
+                                <label class="form-check-label" for="rememberMe">Remember me</label>
+                            </div>
+
+                            <div class="d-grid">
+                                <button class="btn btn-primary rounded-pill py-2" type="submit">
+                                    <i class="fas fa-sign-in-alt me-2"></i>Sign In
+                                </button>
+                            </div>
+                        </form>
+
+                        <hr class="my-4">
+
+                        <div class="text-center">
+                            <p class="mb-0">Don't have an account? 
+                                <a href="{{ path('app_register') }}" class="text-primary fw-bold">Register here</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

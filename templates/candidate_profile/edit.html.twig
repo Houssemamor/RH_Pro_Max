@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Candidate - RH Pro Max{% endblock %}
+
+{% block header %}
+<!-- Header Start -->
+<div class="container-fluid bg-breadcrumb">
+    <div class="container text-center py-5" style="max-width: 900px;">
+        <h4 class="text-white display-4 mb-4 wow fadeInDown" data-wow-delay="0.1s">Edit Candidate</h4>
+        <ol class="breadcrumb d-flex justify-content-center mb-0 wow fadeInDown" data-wow-delay="0.3s">
+            <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{{ path('app_candidate_profile_index') }}">Candidates</a></li>
+            <li class="breadcrumb-item active text-primary">Edit</li>
+        </ol>
+    </div>
+</div>
+<!-- Header End -->
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid py-5">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-warning">
+                        <h5 class="mb-0"><i class="fas fa-edit me-2"></i>Edit Candidate</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        {{ include('candidate_profile/_form.html.twig', {'button_label': 'Update'}) }}
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between mt-3">
+                    <a href="{{ path('app_candidate_profile_index') }}" class="btn btn-outline-secondary rounded-pill">
+                        <i class="fas fa-arrow-left me-2"></i>Back to List
+                    </a>
+                    {{ include('candidate_profile/_delete_form.html.twig') }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

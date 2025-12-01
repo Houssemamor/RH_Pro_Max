@@ -1,0 +1,69 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ skill_category.name }} - Category - RH Pro Max{% endblock %}
+
+{% block header %}
+<!-- Header Start -->
+<div class="container-fluid bg-breadcrumb">
+    <div class="container text-center py-5" style="max-width: 900px;">
+        <h4 class="text-white display-4 mb-4 wow fadeInDown" data-wow-delay="0.1s">Category Details</h4>
+        <ol class="breadcrumb d-flex justify-content-center mb-0 wow fadeInDown" data-wow-delay="0.3s">
+            <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{{ path('app_skill_category_index') }}">Categories</a></li>
+            <li class="breadcrumb-item active text-primary">{{ skill_category.name }}</li>
+        </ol>
+    </div>
+</div>
+<!-- Header End -->
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid py-5">
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="fas fa-layer-group me-2"></i>{{ skill_category.name }}</h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-borderless">
+                            <tr>
+                                <th class="text-muted" style="width: 30%">ID</th>
+                                <td>{{ skill_category.id }}</td>
+                            </tr>
+                            <tr>
+                                <th class="text-muted">Name</th>
+                                <td><strong>{{ skill_category.name }}</strong></td>
+                            </tr>
+                            <tr>
+                                <th class="text-muted">Description</th>
+                                <td>{{ skill_category.description }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-light">
+                        <h6 class="mb-0"><i class="fas fa-cog me-2"></i>Actions</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <a href="{{ path('app_skill_category_edit', {'id': skill_category.id}) }}" class="btn btn-warning rounded-pill">
+                                <i class="fas fa-edit me-2"></i>Edit Category
+                            </a>
+                            <a href="{{ path('app_skill_category_index') }}" class="btn btn-outline-primary rounded-pill">
+                                <i class="fas fa-arrow-left me-2"></i>Back to List
+                            </a>
+                        </div>
+                        <hr>
+                        {{ include('skill_category/_delete_form.html.twig') }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
