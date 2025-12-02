@@ -1,0 +1,116 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My Applications - RH Pro Max{% endblock %}
+
+{% block header %}
+<!-- Header Start -->
+<div class="container-fluid bg-breadcrumb">
+    <div class="container text-center py-5" style="max-width: 900px;">
+        <h4 class="text-white display-4 mb-4 wow fadeInDown" data-wow-delay="0.1s">My Applications</h4>
+        <ol class="breadcrumb d-flex justify-content-center mb-0 wow fadeInDown" data-wow-delay="0.3s">
+            <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Home</a></li>
+            <li class="breadcrumb-item active text-primary">My Applications</li>
+        </ol>
+    </div>
+</div>
+<!-- Header End -->
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid py-5">
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-lg-4 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="fas fa-user me-2"></i>Profile Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Name:</strong> {{ candidate.fullName }}</p>
+                        <p><strong>Email:</strong> {{ candidate.email }}</p>
+                        <p><strong>Phone:</strong> {{ candidate.phone ?? 'Not provided' }}</p>
+                        <p><strong>Member since:</strong> {{ candidate.createdAt|date('M d, Y') }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-8">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="fas fa-briefcase me-2"></i>Job Applications ({{ applications|length }})</h5>
+                        <a href="{{ path('app_job_offer_index') }}" class="btn btn-primary btn-sm rounded-pill">
+                            <i class="fas fa-search me-1"></i>Browse Jobs
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        {% if applications|length > 0 %}
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Job Title</th>
+                                            <th>Location</th>
+                                            <th>Applied On</th>
+                                            <th>Status</th>
+                                            <th>CV</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for application in applications %}
+                                            <tr>
+                                                <td>
+                                                    <strong>{{ application.jobOffer.title }}</strong>
+                                                </td>
+                                                <td>
+                                                    <i class="fas fa-map-marker-alt text-muted me-1"></i>
+                                                    {{ application.jobOffer.location }}
+                                                </td>
+                                                <td>{{ application.createdAt|date('M d, Y') }}</td>
+                                                <td>
+                                                    {% set statusClass = {
+                                                        'NEW': 'primary',
+                                                        'SCREENING': 'info',
+                                                        'INTERVIEW': 'warning',
+                                                        'OFFER': 'success',
+                                                        'HIRED': 'success',
+                                                        'REJECTED': 'danger'
+                                                    } %}
+                                                    <span class="badge bg-{{ statusClass[application.status.value] ?? 'secondary' }}">
+                                                        {{ application.status.value }}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    {% if application.cvs|length > 0 %}
+                                                        <span class="badge bg-success"><i class="fas fa-check me-1"></i>{{ application.cvs|length }}</span>
+                                                    {% else %}
+                                                        <span class="badge bg-warning text-dark"><i class="fas fa-exclamation-triangle me-1"></i>None</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    <a href="{{ path('app_candidate_application_show', {'id': application.id}) }}" class="btn btn-sm btn-outline-primary rounded-pill">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <div class="text-center py-5">
+                                <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
+                                <h5 class="text-muted">No applications yet</h5>
+                                <p class="text-muted">Start browsing job offers and apply for positions that match your skills.</p>
+                                <a href="{{ path('app_job_offer_index') }}" class="btn btn-primary rounded-pill">
+                                    <i class="fas fa-search me-2"></i>Browse Job Offers
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

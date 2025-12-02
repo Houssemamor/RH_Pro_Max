@@ -77,6 +77,10 @@
                                         <a href="{{ path('app_user_show', {'id': app.user.id}) }}" class="dropdown-item"><i class="fas fa-user-alt me-2"></i> My Profile</a>
                                         <a href="{{ path('app_user_edit', {'id': app.user.id}) }}" class="dropdown-item"><i class="fas fa-cog me-2"></i> Account Settings</a>
                                         <div class="dropdown-divider"></div>
+                                    {% elseif is_granted('ROLE_CANDIDATE') %}
+                                        <span class="dropdown-item-text"><i class="fas fa-user me-2"></i>{{ app.user.fullName ?? app.user.email }}</span>
+                                        <a href="{{ path('app_candidate_dashboard') }}" class="dropdown-item"><i class="fas fa-clipboard-list me-2"></i> My Applications</a>
+                                        <div class="dropdown-divider"></div>
                                     {% else %}
                                         <span class="dropdown-item-text"><i class="fas fa-user me-2"></i>{{ app.user.fullName ?? app.user.email }}</span>
                                         <div class="dropdown-divider"></div>
@@ -154,7 +158,7 @@
                         {# Candidates menu - only for RECRUITER role and above #}
                         {% if is_granted('ROLE_RECRUITER') %}
                         <div class="nav-item dropdown">
-                            <a href="#" class="nav-link {% if 'candidate' in app.request.get('_route') %}active{% endif %}" data-bs-toggle="dropdown">
+                            <a href="#" class="nav-link {% if 'candidate_profile' in app.request.get('_route') %}active{% endif %}" data-bs-toggle="dropdown">
                                 <span class="dropdown-toggle">Candidates</span>
                             </a>
                             <div class="dropdown-menu m-0">
@@ -162,6 +166,13 @@
                                 <a href="{{ path('app_candidate_profile_new') }}" class="dropdown-item">Add Candidate</a>
                             </div>
                         </div>
+                        {% endif %}
+                        
+                        {# Candidate Dashboard - only for CANDIDATE role #}
+                        {% if is_granted('ROLE_CANDIDATE') %}
+                        <a href="{{ path('app_candidate_dashboard') }}" class="nav-item nav-link {% if 'candidate_dashboard' in app.request.get('_route') or 'candidate_application' in app.request.get('_route') %}active{% endif %}">
+                            <i class="fas fa-clipboard-list me-1"></i>My Applications
+                        </a>
                         {% endif %}
                         
                         <!-- Mobile Night Mode Toggle -->

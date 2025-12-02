@@ -61,6 +61,9 @@
                                     <button class="btn btn-secondary rounded-pill" disabled>
                                         <i class="fas fa-check-circle me-2"></i>Already Applied
                                     </button>
+                                    <a href="{{ path('app_candidate_dashboard') }}" class="btn btn-info rounded-pill">
+                                        <i class="fas fa-eye me-2"></i>View My Application
+                                    </a>
                                 {% else %}
                                     <form method="post" action="{{ path('app_job_offer_apply', {'id': job_offer.id}) }}">
                                         <input type="hidden" name="_token" value="{{ csrf_token('apply' ~ job_offer.id) }}">

@@ -71,6 +71,11 @@ security:
         - { path: ^/job-offer/\d+/apply, roles: ROLE_CANDIDATE }
         - { path: ^/job-offer, roles: PUBLIC_ACCESS }
 
+        # Candidate dashboard - for candidates to view their applications
+        - { path: ^/candidate/dashboard, roles: ROLE_CANDIDATE }
+        - { path: ^/candidate/application, roles: ROLE_CANDIDATE }
+        - { path: ^/candidate/cv, roles: ROLE_CANDIDATE }
+
         # Employee management - HR only
         - { path: ^/user/new, roles: ROLE_HR_MANAGER }
         - { path: ^/user/\d+/edit, roles: ROLE_EMPLOYEE }
