@@ -121,8 +121,17 @@ class CandidateProfileController extends AbstractController
             $interviewAt = $data['interviewAt'];
             $message = $data['message'] ?? '';
 
-            // 1. Update the status
+            // 1. Update the status and save interview info
             $candidateProfile->setStatus($status);
+            
+            // Save interview date and notes to candidate profile
+            if ($interviewAt) {
+                $candidateProfile->setInterviewAt($interviewAt);
+            }
+            if (!empty($message)) {
+                $candidateProfile->setRecruiterNotes($message);
+            }
+            
             $entityManager->flush();
 
             // 2. Prepare the email

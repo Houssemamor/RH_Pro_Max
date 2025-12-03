@@ -45,6 +45,12 @@ class CandidateProfile
     #[ORM\ManyToOne(inversedBy: 'candidateProfiles')]
     private ?Candidate $candidate = null;
 
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $interviewAt = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $recruiterNotes = null;
+
     public function __construct()
     {
         $this->cvs = new ArrayCollection();
@@ -197,6 +203,30 @@ class CandidateProfile
     public function setCandidate(?Candidate $candidate): static
     {
         $this->candidate = $candidate;
+
+        return $this;
+    }
+
+    public function getInterviewAt(): ?\DateTimeInterface
+    {
+        return $this->interviewAt;
+    }
+
+    public function setInterviewAt(?\DateTimeInterface $interviewAt): static
+    {
+        $this->interviewAt = $interviewAt;
+
+        return $this;
+    }
+
+    public function getRecruiterNotes(): ?string
+    {
+        return $this->recruiterNotes;
+    }
+
+    public function setRecruiterNotes(?string $recruiterNotes): static
+    {
+        $this->recruiterNotes = $recruiterNotes;
 
         return $this;
     }

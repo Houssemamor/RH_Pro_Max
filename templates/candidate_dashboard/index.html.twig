@@ -52,6 +52,7 @@
                                             <th>Location</th>
                                             <th>Applied On</th>
                                             <th>Status</th>
+                                            <th>Interview</th>
                                             <th>CV</th>
                                             <th>Actions</th>
                                         </tr>
@@ -79,6 +80,15 @@
                                                     <span class="badge bg-{{ statusClass[application.status.value] ?? 'secondary' }}">
                                                         {{ application.status.value }}
                                                     </span>
+                                                </td>
+                                                <td>
+                                                    {% if application.interviewAt %}
+                                                        <span class="badge bg-warning text-dark" title="{{ application.interviewAt|date('M d, Y H:i') }}">
+                                                            <i class="fas fa-calendar-check me-1"></i>{{ application.interviewAt|date('M d') }}
+                                                        </span>
+                                                    {% else %}
+                                                        <span class="text-muted">-</span>
+                                                    {% endif %}
                                                 </td>
                                                 <td>
                                                     {% if application.cvs|length > 0 %}
