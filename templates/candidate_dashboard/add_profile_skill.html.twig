@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Add Skill to Profile - RH Pro Max{% endblock %}
+
+{% block header %}
+<div class="container-fluid bg-breadcrumb">
+    <div class="container text-center py-5" style="max-width: 900px;">
+        <h4 class="text-white display-4 mb-4 wow fadeInDown" data-wow-delay="0.1s">Add Skill</h4>
+        <ol class="breadcrumb d-flex justify-content-center mb-0 wow fadeInDown" data-wow-delay="0.3s">
+            <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{{ path('app_candidate_dashboard') }}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{{ path('app_candidate_profile') }}">My Profile</a></li>
+            <li class="breadcrumb-item active text-primary">Add Skill</li>
+        </ol>
+    </div>
+</div>
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid py-5">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="fas fa-plus-circle me-2"></i>Add Skill to Your Profile</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="alert alert-info mb-4">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Note:</strong> Skills added to your profile will be automatically included in all future job applications.
+                        </div>
+
+                        {{ form_start(form, {'attr': {'class': 'row g-3'}}) }}
+                            <div class="col-md-12">
+                                {{ form_row(form.skill) }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form_row(form.level) }}
+                                <small class="form-text text-muted">
+                                    <strong>Skill Levels:</strong><br>
+                                    • <strong>Beginner:</strong> Basic understanding<br>
+                                    • <strong>Intermediate:</strong> Practical experience<br>
+                                    • <strong>Advanced:</strong> Extensive experience<br>
+                                    • <strong>Expert:</strong> Mastery level
+                                </small>
+                            </div>
+                            <div class="col-md-6">
+                                {{ form_row(form.yearsExperience) }}
+                                <small class="form-text text-muted">Optional: How many years have you worked with this skill?</small>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-success rounded-pill px-4">
+                                    <i class="fas fa-save me-2"></i>Add to Profile
+                                </button>
+                                <a href="{{ path('app_candidate_profile') }}" class="btn btn-outline-secondary rounded-pill px-4 ms-2">
+                                    <i class="fas fa-times me-2"></i>Cancel
+                                </a>
+                            </div>
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

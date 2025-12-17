@@ -105,6 +105,193 @@
                     </div>
                 </div>
 
+                <!-- Skill Match Section -->
+                {% if skill_match %}
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <h5 class="mb-0 text-white">
+                            <i class="fas fa-chart-pie me-2"></i>Your Skill Match
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-center mb-4">
+                            <div class="mb-3">
+                                <h2 class="display-4 mb-0 
+                                    {% if skill_match.level == 'excellent' %}text-success
+                                    {% elseif skill_match.level == 'good' %}text-primary
+                                    {% elseif skill_match.level == 'fair' %}text-warning
+                                    {% else %}text-danger{% endif %}">
+                                    {{ skill_match.matchPercentage }}%
+                                </h2>
+                                <p class="text-muted">Match Score</p>
+                            </div>
+                            <span class="badge 
+                                {% if skill_match.level == 'excellent' %}bg-success
+                                {% elseif skill_match.level == 'good' %}bg-primary
+                                {% elseif skill_match.level == 'fair' %}bg-warning
+                                {% else %}bg-danger{% endif %} fs-6 px-3 py-2">
+                                {{ skill_match.level|upper }}
+                            </span>
+                        </div>
+                        
+                        {% if skill_match.matchedSkills|length > 0 %}
+                        <div class="mb-3">
+                            <h6 class="text-success"><i class="fas fa-check-circle me-2"></i>Matched Skills</h6>
+                            <div class="d-flex flex-wrap gap-2">
+                                {% for jobSkill in skill_match.matchedSkills %}
+                                <span class="badge bg-success">{{ jobSkill.skill.name }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if skill_match.bonusSkills|length > 0 %}
+                        <div class="mb-3">
+                            <h6 class="text-info"><i class="fas fa-plus-circle me-2"></i>Bonus Skills</h6>
+                            <div class="d-flex flex-wrap gap-2">
+                                {% for jobSkill in skill_match.bonusSkills %}
+                                <span class="badge bg-info">{{ jobSkill.skill.name }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if skill_match.missingSkills|length > 0 %}
+                        <div class="mb-3">
+                            <h6 class="text-danger"><i class="fas fa-times-circle me-2"></i>Skills to Improve</h6>
+                            <div class="d-flex flex-wrap gap-2">
+                                {% for jobSkill in skill_match.missingSkills %}
+                                <span class="badge bg-danger">
+                                    {{ jobSkill.skill.name }}
+                                    <span class="badge bg-light text-dark ms-1">{{ jobSkill.requiredLevel.name }}</span>
+                                </span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- My Skills Section -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="fas fa-star me-2"></i>My Skills</h5>
+                        <a href="{{ path('app_candidate_add_skill', {'id': application.id}) }}" class="btn btn-primary btn-sm rounded-pill">
+                            <i class="fas fa-plus me-1"></i>Add Skill
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        {% if application.skills|length > 0 %}
+                            <div class="d-flex flex-wrap gap-2">
+                                {% for candidateSkill in application.skills %}
+                                <div class="position-relative">
+                                    <span class="badge bg-secondary fs-6">
+                                        {{ candidateSkill.skill.name }}
+                                        <span class="badge bg-light text-dark ms-1">{{ candidateSkill.level.name }}</span>
+                                    </span>
+                                    <form action="{{ path('app_candidate_delete_skill', {'id': candidateSkill.id}) }}" method="post" class="d-inline" onsubmit="return confirm('Remove this skill?');">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete-skill' ~ candidateSkill.id) }}">
+                                        <button type="submit" class="btn btn-sm btn-link text-danger p-0 ms-1" style="font-size: 0.7em; text-decoration: none;">
+                                            <i class="fas fa-times-circle"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="text-center py-3">
+                                <i class="fas fa-star fa-3x text-muted mb-3"></i>
+                                <h6 class="text-muted">No skills added yet</h6>
+                                <p class="text-muted small">Add your skills to improve your application match!</p>
+                                <a href="{{ path('app_candidate_add_skill', {'id': application.id}) }}" class="btn btn-primary btn-sm rounded-pill">
+                                    <i class="fas fa-plus me-2"></i>Add Your First Skill
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Skills Section -->
+                {% if skill_match %}
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <h5 class="mb-0 text-white">
+                            <i class="fas fa-chart-pie me-2"></i>Skill Match Analysis
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-center mb-4">
+                            <div class="mb-3">
+                                <h2 class="display-4 mb-0 
+                                    {% if skill_match.level == 'excellent' %}text-success
+                                    {% elseif skill_match.level == 'good' %}text-primary
+                                    {% elseif skill_match.level == 'fair' %}text-warning
+                                    {% else %}text-danger{% endif %}">
+                                    {{ skill_match.matchPercentage }}%
+                                </h2>
+                                <p class="text-muted">Overall Match</p>
+                            </div>
+                            <span class="badge 
+                                {% if skill_match.level == 'excellent' %}bg-success
+                                {% elseif skill_match.level == 'good' %}bg-primary
+                                {% elseif skill_match.level == 'fair' %}bg-warning
+                                {% else %}bg-danger{% endif %} fs-6 px-3 py-2">
+                                {{ skill_match.level|upper }}
+                            </span>
+                        </div>
+                        
+                        {% if skill_match.matchedSkills|length > 0 %}
+                        <div class="mb-2">
+                            <h6 class="text-success"><i class="fas fa-check-circle me-2"></i>Matched Skills ({{ skill_match.matchedSkills|length }})</h6>
+                            <div class="d-flex flex-wrap gap-2">
+                                {% for jobSkill in skill_match.matchedSkills %}
+                                <span class="badge bg-success">{{ jobSkill.skill.name }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if skill_match.missingSkills|length > 0 %}
+                        <div class="mb-2 mt-3">
+                            <h6 class="text-danger"><i class="fas fa-times-circle me-2"></i>Missing Skills ({{ skill_match.missingSkills|length }})</h6>
+                            <div class="d-flex flex-wrap gap-2">
+                                {% for jobSkill in skill_match.missingSkills %}
+                                <span class="badge bg-danger">{{ jobSkill.skill.name }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Your Skills -->
+                {% if application.skills|length > 0 %}
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="fas fa-star me-2"></i>Your Skills ({{ application.skills|length }})</h5>
+                        <a href="{{ path('app_candidate_add_skill', {'id': application.id}) }}" class="btn btn-primary btn-sm rounded-pill">
+                            <i class="fas fa-plus me-1"></i>Add Skill
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex flex-wrap gap-2">
+                            {% for candidateSkill in application.skills %}
+                            <span class="badge bg-info fs-6">
+                                {{ candidateSkill.skill.name }}
+                                <span class="badge bg-light text-dark ms-1">{{ candidateSkill.level.name }}</span>
+                            </span>
+                            {% endfor %}
+                        </div>
+                        <div class="alert alert-info mt-3 mb-0">
+                            <i class="fas fa-lightbulb me-2"></i>
+                            <small>Tip: Add more skills to your <a href="{{ path('app_candidate_profile') }}">profile</a> - they'll be automatically included in future applications!</small>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
                 <!-- CV Documents -->
                 <div class="card shadow-sm">
                     <div class="card-header bg-light d-flex justify-content-between align-items-center">

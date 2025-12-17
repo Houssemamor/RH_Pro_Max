@@ -1,6 +1,84 @@
 {{ form_start(form, {'attr': {'class': 'row g-3'}}) }}
-    {{ form_widget(form) }}
     <div class="col-12">
-        <button class="btn btn-primary rounded-pill px-4"><i class="fas fa-save me-2"></i>{{ button_label|default('Save') }}</button>
+        {{ form_errors(form) }}
+    </div>
+
+    {% if form.firstName is defined %}
+        <div class="col-md-6">
+            {{ form_row(form.firstName) }}
+        </div>
+    {% endif %}
+    {% if form.lastName is defined %}
+        <div class="col-md-6">
+            {{ form_row(form.lastName) }}
+        </div>
+    {% endif %}
+
+    {% if form.email is defined %}
+        <div class="col-md-12">
+            {{ form_row(form.email) }}
+        </div>
+    {% endif %}
+
+    {# New employee form uses plainPassword (RepeatedType), edit form uses password (single field) #}
+    {% if form.plainPassword is defined %}
+        <div class="col-md-6">
+            {{ form_row(form.plainPassword.first) }}
+        </div>
+        <div class="col-md-6">
+            {{ form_row(form.plainPassword.second) }}
+        </div>
+    {% elseif form.password is defined %}
+        <div class="col-md-12">
+            {{ form_row(form.password) }}
+        </div>
+    {% endif %}
+
+    {% if form.role is defined %}
+        <div class="col-md-6">
+            {{ form_row(form.role) }}
+        </div>
+    {% endif %}
+    {% if form.status is defined %}
+        <div class="col-md-6">
+            {{ form_row(form.status) }}
+        </div>
+    {% endif %}
+
+    {% if form.matricule is defined %}
+        <div class="col-md-6">
+            {{ form_row(form.matricule) }}
+        </div>
+    {% endif %}
+    {% if form.department is defined %}
+        <div class="col-md-6">
+            {{ form_row(form.department) }}
+        </div>
+    {% endif %}
+
+    {% if form.jobTitle is defined %}
+        <div class="col-md-6">
+            {{ form_row(form.jobTitle) }}
+        </div>
+    {% endif %}
+    {% if form.birthday is defined %}
+        <div class="col-md-6">
+            {{ form_row(form.birthday) }}
+        </div>
+    {% endif %}
+
+    {% if form.hireDate is defined %}
+        <div class="col-md-6">
+            {{ form_row(form.hireDate) }}
+        </div>
+    {% endif %}
+
+    {# Render anything else (including _token) that wasn't explicitly placed above #}
+    {{ form_rest(form) }}
+
+    <div class="col-12 d-flex justify-content-end">
+        <button class="btn btn-primary rounded-pill px-4">
+            <i class="fas fa-save me-2"></i>{{ button_label|default('Save') }}
+        </button>
     </div>
 {{ form_end(form) }}

@@ -21,7 +21,7 @@
     <div class="container py-5">
         <div class="row">
             <div class="col-lg-4 mb-4">
-                <div class="card shadow-sm">
+                <div class="card shadow-sm mb-3">
                     <div class="card-header bg-primary text-white">
                         <h5 class="mb-0"><i class="fas fa-user me-2"></i>Profile Information</h5>
                     </div>
@@ -30,8 +30,33 @@
                         <p><strong>Email:</strong> {{ candidate.email }}</p>
                         <p><strong>Phone:</strong> {{ candidate.phone ?? 'Not provided' }}</p>
                         <p><strong>Member since:</strong> {{ candidate.createdAt|date('M d, Y') }}</p>
+                        <hr>
+                        <div class="d-grid gap-2">
+                            <a href="{{ path('app_candidate_profile') }}" class="btn btn-info rounded-pill">
+                                <i class="fas fa-user-circle me-2"></i>My Profile & Skills
+                            </a>
+                            <a href="{{ path('app_job_offer_index') }}" class="btn btn-success rounded-pill">
+                                <i class="fas fa-search me-2"></i>Browse Jobs
+                            </a>
+                        </div>
                     </div>
                 </div>
+                
+                {% if candidate.profileSkills|length > 0 %}
+                <div class="card shadow-sm">
+                    <div class="card-header bg-light">
+                        <h6 class="mb-0"><i class="fas fa-star me-2"></i>My Skills ({{ candidate.profileSkills|length }})</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex flex-wrap gap-2 mb-2">
+                            {% for profileSkill in candidate.profileSkills %}
+                                <span class="badge bg-secondary">{{ profileSkill.skill.name }}</span>
+                            {% endfor %}
+                        </div>
+                        <small class="text-muted">These skills are automatically added to your applications</small>
+                    </div>
+                </div>
+                {% endif %}
             </div>
 
             <div class="col-lg-8">

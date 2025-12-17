@@ -6,6 +6,7 @@ use App\Entity\CandidateProfile;
 use App\Enum\CandidateStatus;
 use App\Form\CandidateProfileType;
 use App\Repository\CandidateProfileRepository;
+use App\Service\SkillMatchingService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
@@ -23,10 +24,39 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class CandidateProfileController extends AbstractController
 {
     #[Route('/', name: 'app_candidate_profile_index', methods: ['GET'])]
-    public function index(CandidateProfileRepository $candidateProfileRepository): Response
+    public function index(CandidateProfileRepository $candidateProfileRepository, SkillMatchingService $skillMatchingService): Response
     {
+        $candidateProfiles = $candidateProfileRepository->findAll();
+        
+        // Calculate skill match for each candidate
+        $candidatesWithMatch = [];
+        foreach ($candidateProfiles as $candidate) {
+            $jobOffer = $candidate->getJobOffer();
+            $matchData = null;
+            
+            if ($jobOffer) {
+                $match = $skillMatchingService->calculateMatch($candidate, $jobOffer);
+                $matchData = [
+                    'percentage' => $match['matchPercentage'],
+                    'level' => $skillMatchingService->getMatchLevel($match['matchPercentage'])
+                ];
+            }
+            
+            $candidatesWithMatch[] = [
+                'profile' => $candidate,
+                'match' => $matchData
+            ];
+        }
+        
+        // Sort by match percentage (highest first)
+        usort($candidatesWithMatch, function($a, $b) {
+            $matchA = $a['match']['percentage'] ?? 0;
+            $matchB = $b['match']['percentage'] ?? 0;
+            return $matchB <=> $matchA;
+        });
+
         return $this->render('candidate_profile/index.html.twig', [
-            'candidate_profiles' => $candidateProfileRepository->findAll(),
+            'candidates_with_match' => $candidatesWithMatch,
         ]);
     }
 
@@ -51,10 +81,20 @@ class CandidateProfileController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_candidate_profile_show', methods: ['GET'])]
-    public function show(CandidateProfile $candidateProfile): Response
+    public function show(CandidateProfile $candidateProfile, SkillMatchingService $skillMatchingService): Response
     {
+        // Calculate skill match with job offer
+        $jobOffer = $candidateProfile->getJobOffer();
+        $skillMatch = null;
+        
+        if ($jobOffer) {
+            $skillMatch = $skillMatchingService->calculateMatch($candidateProfile, $jobOffer);
+            $skillMatch['level'] = $skillMatchingService->getMatchLevel($skillMatch['matchPercentage']);
+        }
+
         return $this->render('candidate_profile/show.html.twig', [
             'candidate_profile' => $candidateProfile,
+            'skill_match' => $skillMatch,
         ]);
     }
 

@@ -42,9 +42,16 @@ class JobOffer
     #[ORM\OneToMany(mappedBy: 'jobOffer', targetEntity: CandidateProfile::class)]
     private Collection $candidates;
 
+    /**
+     * Skills required or recommended for this job offer
+     */
+    #[ORM\OneToMany(mappedBy: 'jobOffer', targetEntity: JobOfferSkill::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    private Collection $skills;
+
     public function __construct()
     {
         $this->candidates = new ArrayCollection();
+        $this->skills = new ArrayCollection();
         $this->createdAt = new \DateTime();
     }
 
@@ -165,5 +172,55 @@ class JobOffer
         }
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, JobOfferSkill>
+     */
+    public function getSkills(): Collection
+    {
+        return $this->skills;
+    }
+
+    public function addSkill(JobOfferSkill $skill): static
+    {
+        if (!$this->skills->contains($skill)) {
+            $this->skills->add($skill);
+            $skill->setJobOffer($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSkill(JobOfferSkill $skill): static
+    {
+        if ($this->skills->removeElement($skill)) {
+            // set the owning side to null (unless already changed)
+            if ($skill->getJobOffer() === $this) {
+                $skill->setJobOffer(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get all required skills (mandatory for the position)
+     * 
+     * @return array<JobOfferSkill>
+     */
+    public function getRequiredSkills(): array
+    {
+        return $this->skills->filter(fn(JobOfferSkill $skill) => $skill->isRequired())->toArray();
+    }
+
+    /**
+     * Get all optional skills (nice to have)
+     * 
+     * @return array<JobOfferSkill>
+     */
+    public function getOptionalSkills(): array
+    {
+        return $this->skills->filter(fn(JobOfferSkill $skill) => !$skill->isRequired())->toArray();
     }
 }

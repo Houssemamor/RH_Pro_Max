@@ -35,6 +35,43 @@
                         </div>
                         <h6 class="text-primary">Description</h6>
                         <p>{{ job_offer.description }}</p>
+                        
+                        {% if job_offer.skills|length > 0 %}
+                        <hr>
+                        <h6 class="text-primary"><i class="fas fa-star me-2"></i>Required Skills</h6>
+                        
+                        {% set requiredSkills = job_offer.requiredSkills %}
+                        {% set optionalSkills = job_offer.optionalSkills %}
+                        
+                        {% if requiredSkills|length > 0 %}
+                        <div class="mb-3">
+                            <p class="mb-2 text-muted small"><strong>Mandatory Skills:</strong></p>
+                            <div class="d-flex flex-wrap gap-2">
+                                {% for jobSkill in requiredSkills %}
+                                <span class="badge bg-danger" title="Required level: {{ jobSkill.requiredLevel.name }}">
+                                    <i class="fas fa-exclamation-circle me-1"></i>{{ jobSkill.skill.name }}
+                                    <span class="badge bg-light text-dark ms-1">{{ jobSkill.requiredLevel.name }}</span>
+                                </span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if optionalSkills|length > 0 %}
+                        <div class="mb-3">
+                            <p class="mb-2 text-muted small"><strong>Nice to Have:</strong></p>
+                            <div class="d-flex flex-wrap gap-2">
+                                {% for jobSkill in optionalSkills %}
+                                <span class="badge bg-info" title="Desired level: {{ jobSkill.requiredLevel.name }}">
+                                    <i class="fas fa-plus-circle me-1"></i>{{ jobSkill.skill.name }}
+                                    <span class="badge bg-light text-dark ms-1">{{ jobSkill.requiredLevel.name }}</span>
+                                </span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% endif %}
+                        
                         <hr>
                         <div class="row">
                             <div class="col-md-6">

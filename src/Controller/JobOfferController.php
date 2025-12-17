@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\CandidateProfile;
+use App\Entity\CandidateSkill;
 use App\Entity\JobOffer;
 use App\Entity\Candidate;
 use App\Enum\CandidateStatus;
@@ -113,9 +114,28 @@ class JobOfferController extends AbstractController
         $candidateProfile->setStatus(CandidateStatus::NEW);
 
         $entityManager->persist($candidateProfile);
+
+        // Copy skills from candidate's profile to this application
+        $skillCount = 0;
+        foreach ($candidate->getProfileSkills() as $profileSkill) {
+            $candidateSkill = new CandidateSkill();
+            $candidateSkill->setCandidateProfile($candidateProfile);
+            $candidateSkill->setSkill($profileSkill->getSkill());
+            $candidateSkill->setLevel($profileSkill->getLevel());
+            $candidateSkill->setConfidence(1.0); // Profile skills = 100% confidence
+            
+            $entityManager->persist($candidateSkill);
+            $skillCount++;
+        }
+
         $entityManager->flush();
 
-        $this->addFlash('success', 'Your application has been submitted successfully!');
+        if ($skillCount > 0) {
+            $this->addFlash('success', 'Your application has been submitted successfully with ' . $skillCount . ' skill' . ($skillCount > 1 ? 's' : '') . ' imported from your profile!');
+        } else {
+            $this->addFlash('success', 'Your application has been submitted successfully!');
+            $this->addFlash('info', 'Tip: Add skills to your profile to improve your match with job requirements.');
+        }
 
         return $this->redirectToRoute('app_job_offer_show', ['id' => $jobOffer->getId()]);
     }

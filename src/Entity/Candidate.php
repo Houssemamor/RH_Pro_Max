@@ -49,9 +49,17 @@ class Candidate implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'candidate', targetEntity: CandidateProfile::class)]
     private Collection $candidateProfiles;
 
+    /**
+     * Personal skills that belong to the candidate's profile
+     * These skills are automatically copied to job applications
+     */
+    #[ORM\OneToMany(mappedBy: 'candidate', targetEntity: CandidateProfileSkill::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    private Collection $profileSkills;
+
     public function __construct()
     {
         $this->candidateProfiles = new ArrayCollection();
+        $this->profileSkills = new ArrayCollection();
         $this->createdAt = new \DateTime();
     }
 
@@ -203,6 +211,33 @@ class Candidate implements UserInterface, PasswordAuthenticatedUserInterface
         if ($this->candidateProfiles->removeElement($candidateProfile)) {
             if ($candidateProfile->getCandidate() === $this) {
                 $candidateProfile->setCandidate(null);
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CandidateProfileSkill>
+     */
+    public function getProfileSkills(): Collection
+    {
+        return $this->profileSkills;
+    }
+
+    public function addProfileSkill(CandidateProfileSkill $profileSkill): static
+    {
+        if (!$this->profileSkills->contains($profileSkill)) {
+            $this->profileSkills->add($profileSkill);
+            $profileSkill->setCandidate($this);
+        }
+        return $this;
+    }
+
+    public function removeProfileSkill(CandidateProfileSkill $profileSkill): static
+    {
+        if ($this->profileSkills->removeElement($profileSkill)) {
+            if ($profileSkill->getCandidate() === $this) {
+                $profileSkill->setCandidate(null);
             }
         }
         return $this;

@@ -1,6 +1,105 @@
 {{ form_start(form, {'attr': {'class': 'row g-3'}}) }}
-    {{ form_widget(form) }}
+    <div class="col-md-12">
+        {{ form_row(form.title, {'attr': {'class': 'form-control'}}) }}
+    </div>
+    <div class="col-md-12">
+        {{ form_row(form.description, {'attr': {'class': 'form-control', 'rows': 5}}) }}
+    </div>
+    <div class="col-md-6">
+        {{ form_row(form.location, {'attr': {'class': 'form-control'}}) }}
+    </div>
+    <div class="col-md-6">
+        {{ form_row(form.status, {'attr': {'class': 'form-control'}}) }}
+    </div>
+    <div class="col-md-6">
+        {{ form_row(form.createdAt, {'attr': {'class': 'form-control'}}) }}
+    </div>
+    <div class="col-md-6">
+        {{ form_row(form.closingDate, {'attr': {'class': 'form-control'}}) }}
+    </div>
+    <div class="col-md-12">
+        {{ form_row(form.creator, {'attr': {'class': 'form-control'}}) }}
+    </div>
+    
+    <div class="col-md-12">
+        <hr class="my-4">
+        <h5 class="mb-3"><i class="fas fa-star me-2"></i>Required Skills</h5>
+        <div id="skills-collection" data-prototype="{{ form_widget(form.skills.vars.prototype)|e('html_attr') }}" data-index="{{ form.skills|length }}">
+            {% for skill in form.skills %}
+            <div class="skill-item card mb-2">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-5">
+                            {{ form_row(skill.skill, {'label': 'Skill'}) }}
+                        </div>
+                        <div class="col-md-4">
+                            {{ form_row(skill.requiredLevel, {'label': 'Level'}) }}
+                        </div>
+                        <div class="col-md-2">
+                            {{ form_row(skill.isRequired, {'label': 'Required'}) }}
+                        </div>
+                        <div class="col-md-1 d-flex align-items-center">
+                            <button type="button" class="btn btn-danger btn-sm remove-skill-btn" title="Remove skill">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <button type="button" class="btn btn-outline-primary btn-sm" id="add-skill-btn">
+            <i class="fas fa-plus me-2"></i>Add Skill
+        </button>
+    </div>
+    
     <div class="col-12">
         <button class="btn btn-primary rounded-pill px-4"><i class="fas fa-save me-2"></i>{{ button_label|default('Save') }}</button>
     </div>
 {{ form_end(form) }}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const collectionHolder = document.getElementById('skills-collection');
+    const addSkillBtn = document.getElementById('add-skill-btn');
+    
+    let index = parseInt(collectionHolder.dataset.index);
+    
+    addSkillBtn.addEventListener('click', function() {
+        const prototype = collectionHolder.dataset.prototype;
+        const newForm = prototype.replace(/__name__/g, index);
+        
+        const wrapper = document.createElement('div');
+        wrapper.className = 'skill-item card mb-2';
+        wrapper.innerHTML = `
+            <div class="card-body">
+                <div class="row">
+                    ${newForm}
+                    <div class="col-md-1 d-flex align-items-center">
+                        <button type="button" class="btn btn-danger btn-sm remove-skill-btn" title="Remove skill">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        collectionHolder.appendChild(wrapper);
+        index++;
+        
+        // Attach remove handler
+        attachRemoveHandlers();
+    });
+    
+    function attachRemoveHandlers() {
+        document.querySelectorAll('.remove-skill-btn').forEach(btn => {
+            btn.onclick = function() {
+                this.closest('.skill-item').remove();
+            };
+        });
+    }
+    
+    // Initial attach
+    attachRemoveHandlers();
+});
+</script>

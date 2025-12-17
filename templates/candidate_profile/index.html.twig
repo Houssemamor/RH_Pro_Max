@@ -36,12 +36,15 @@
                         <th>Full Name</th>
                         <th>Email</th>
                         <th>Status</th>
+                        <th>Skill Match</th>
                         <th>Applied On</th>
                         <th class="text-center">Actions</th>
                     </tr>
                     </thead>
                     <tbody>
-                    {% for candidate_profile in candidate_profiles %}
+                    {% for item in candidates_with_match %}
+                        {% set candidate_profile = item.profile %}
+                        {% set match = item.match %}
                         <tr>
                             <td>{{ candidate_profile.id }}</td>
                             <td><strong>{{ candidate_profile.fullName }}</strong></td>
@@ -61,6 +64,28 @@
                                     <span class="badge bg-{{ statusClass[candidate_profile.status.value] ?? 'secondary' }}">
                                     {{ candidate_profile.status.value }}
                                 </span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if match %}
+                                <div class="d-flex align-items-center">
+                                    <div class="progress me-2" style="width: 80px; height: 20px;">
+                                        <div class="progress-bar 
+                                            {% if match.level == 'excellent' %}bg-success
+                                            {% elseif match.level == 'good' %}bg-primary
+                                            {% elseif match.level == 'fair' %}bg-warning
+                                            {% else %}bg-danger{% endif %}"
+                                            role="progressbar"
+                                            style="width: {{ match.percentage }}%"
+                                            aria-valuenow="{{ match.percentage }}"
+                                            aria-valuemin="0"
+                                            aria-valuemax="100">
+                                        </div>
+                                    </div>
+                                    <small class="fw-bold">{{ match.percentage }}%</small>
+                                </div>
+                                {% else %}
+                                <span class="text-muted">-</span>
                                 {% endif %}
                             </td>
                             <td>{{ candidate_profile.createdAt ? candidate_profile.createdAt|date('M d, Y') : '-' }}</td>
@@ -87,7 +112,7 @@
                         </tr>
                     {% else %}
                         <tr>
-                            <td colspan="6" class="text-center py-4">
+                            <td colspan="7" class="text-center py-4">
                                 <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
                                 <p class="text-muted mb-0">No candidates found</p>
                             </td>

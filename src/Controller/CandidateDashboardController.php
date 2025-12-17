@@ -3,9 +3,14 @@
 namespace App\Controller;
 
 use App\Entity\Candidate;
+use App\Entity\CandidateSkill;
+use App\Entity\CandidateProfileSkill;
 use App\Entity\CV;
+use App\Form\CandidateSkillEditType;
+use App\Form\CandidateProfileSkillType;
 use App\Form\CVType;
 use App\Repository\CandidateProfileRepository;
+use App\Service\SkillMatchingService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -41,7 +46,7 @@ class CandidateDashboardController extends AbstractController
     }
 
     #[Route('/application/{id}', name: 'app_candidate_application_show', methods: ['GET'])]
-    public function showApplication(int $id, CandidateProfileRepository $candidateProfileRepository): Response
+    public function showApplication(int $id, CandidateProfileRepository $candidateProfileRepository, SkillMatchingService $skillMatchingService): Response
     {
         $candidate = $this->getUser();
 
@@ -55,8 +60,18 @@ class CandidateDashboardController extends AbstractController
             throw $this->createNotFoundException('Application not found.');
         }
 
+        // Calculate skill match with job offer
+        $jobOffer = $application->getJobOffer();
+        $skillMatch = null;
+        
+        if ($jobOffer) {
+            $skillMatch = $skillMatchingService->calculateMatch($application, $jobOffer);
+            $skillMatch['level'] = $skillMatchingService->getMatchLevel($skillMatch['matchPercentage']);
+        }
+
         return $this->render('candidate_dashboard/show_application.html.twig', [
             'application' => $application,
+            'skill_match' => $skillMatch,
         ]);
     }
 
@@ -158,5 +173,176 @@ class CandidateDashboardController extends AbstractController
         }
 
         return $this->redirectToRoute('app_candidate_application_show', ['id' => $applicationId]);
+    }
+
+    #[Route('/application/{id}/add-skill', name: 'app_candidate_add_skill', methods: ['GET', 'POST'])]
+    public function addSkill(
+        int $id,
+        Request $request,
+        CandidateProfileRepository $candidateProfileRepository,
+        EntityManagerInterface $entityManager
+    ): Response {
+        $candidate = $this->getUser();
+
+        if (!$candidate instanceof Candidate) {
+            throw $this->createAccessDeniedException('Only candidates can access this page.');
+        }
+
+        $application = $candidateProfileRepository->find($id);
+
+        if (!$application || $application->getCandidate() !== $candidate) {
+            throw $this->createNotFoundException('Application not found.');
+        }
+
+        $candidateSkill = new CandidateSkill();
+        $candidateSkill->setCandidateProfile($application);
+        $candidateSkill->setConfidence(1.0); // Manual entry = 100% confidence
+
+        $form = $this->createForm(CandidateSkillEditType::class, $candidateSkill);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Check if skill already exists for this application
+            $existingSkill = null;
+            foreach ($application->getSkills() as $existing) {
+                if ($existing->getSkill()->getId() === $candidateSkill->getSkill()->getId()) {
+                    $existingSkill = $existing;
+                    break;
+                }
+            }
+
+            if ($existingSkill) {
+                $this->addFlash('warning', 'You already have this skill in your profile.');
+            } else {
+                $entityManager->persist($candidateSkill);
+                $entityManager->flush();
+
+                $this->addFlash('success', 'Skill added successfully!');
+            }
+
+            return $this->redirectToRoute('app_candidate_application_show', ['id' => $id]);
+        }
+
+        return $this->render('candidate_dashboard/add_skill.html.twig', [
+            'application' => $application,
+            'form' => $form,
+        ]);
+    }
+
+    #[Route('/skill/{id}/delete', name: 'app_candidate_delete_skill', methods: ['POST'])]
+    public function deleteSkill(
+        int $id,
+        Request $request,
+        EntityManagerInterface $entityManager
+    ): Response {
+        $candidate = $this->getUser();
+
+        if (!$candidate instanceof Candidate) {
+            throw $this->createAccessDeniedException('Only candidates can access this page.');
+        }
+
+        $candidateSkill = $entityManager->getRepository(CandidateSkill::class)->find($id);
+
+        if (!$candidateSkill || $candidateSkill->getCandidateProfile()->getCandidate() !== $candidate) {
+            throw $this->createNotFoundException('Skill not found.');
+        }
+
+        $applicationId = $candidateSkill->getCandidateProfile()->getId();
+
+        if ($this->isCsrfTokenValid('delete-skill' . $candidateSkill->getId(), $request->getPayload()->getString('_token'))) {
+            $entityManager->remove($candidateSkill);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Skill removed successfully!');
+        }
+
+        return $this->redirectToRoute('app_candidate_application_show', ['id' => $applicationId]);
+    }
+
+    #[Route('/my-profile', name: 'app_candidate_profile', methods: ['GET'])]
+    public function profile(): Response
+    {
+        $candidate = $this->getUser();
+
+        if (!$candidate instanceof Candidate) {
+            throw $this->createAccessDeniedException('Only candidates can access this page.');
+        }
+
+        return $this->render('candidate_dashboard/profile.html.twig', [
+            'candidate' => $candidate,
+        ]);
+    }
+
+    #[Route('/my-profile/add-skill', name: 'app_candidate_profile_add_skill', methods: ['GET', 'POST'])]
+    public function addProfileSkill(
+        Request $request,
+        EntityManagerInterface $entityManager
+    ): Response {
+        $candidate = $this->getUser();
+
+        if (!$candidate instanceof Candidate) {
+            throw $this->createAccessDeniedException('Only candidates can access this page.');
+        }
+
+        $profileSkill = new CandidateProfileSkill();
+        $profileSkill->setCandidate($candidate);
+
+        $form = $this->createForm(CandidateProfileSkillType::class, $profileSkill);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Check if skill already exists
+            $existingSkill = null;
+            foreach ($candidate->getProfileSkills() as $existing) {
+                if ($existing->getSkill()->getId() === $profileSkill->getSkill()->getId()) {
+                    $existingSkill = $existing;
+                    break;
+                }
+            }
+
+            if ($existingSkill) {
+                $this->addFlash('warning', 'You already have this skill in your profile.');
+            } else {
+                $entityManager->persist($profileSkill);
+                $entityManager->flush();
+
+                $this->addFlash('success', 'Skill added to your profile!');
+            }
+
+            return $this->redirectToRoute('app_candidate_profile');
+        }
+
+        return $this->render('candidate_dashboard/add_profile_skill.html.twig', [
+            'candidate' => $candidate,
+            'form' => $form,
+        ]);
+    }
+
+    #[Route('/my-profile/skill/{id}/delete', name: 'app_candidate_profile_delete_skill', methods: ['POST'])]
+    public function deleteProfileSkill(
+        int $id,
+        Request $request,
+        EntityManagerInterface $entityManager
+    ): Response {
+        $candidate = $this->getUser();
+
+        if (!$candidate instanceof Candidate) {
+            throw $this->createAccessDeniedException('Only candidates can access this page.');
+        }
+
+        $profileSkill = $entityManager->getRepository(CandidateProfileSkill::class)->find($id);
+
+        if (!$profileSkill || $profileSkill->getCandidate() !== $candidate) {
+            throw $this->createNotFoundException('Skill not found.');
+        }
+
+        if ($this->isCsrfTokenValid('delete-profile-skill' . $profileSkill->getId(), $request->getPayload()->getString('_token'))) {
+            $entityManager->remove($profileSkill);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Skill removed from your profile!');
+        }
+
+        return $this->redirectToRoute('app_candidate_profile');
     }
 }
