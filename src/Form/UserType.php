@@ -18,9 +18,12 @@ class UserType extends AbstractType
         $builder
             ->add('email')
             ->add('password', PasswordType::class, [
+                'mapped' => false,
                 'required' => false,
-                'empty_data' => '',
-                'attr' => ['autocomplete' => 'new-password'],
+                'attr' => [
+                    'autocomplete' => 'new-password',
+                    'placeholder' => 'Leave blank to keep current password'
+                ],
             ])
             ->add('status', EnumType::class, [
                 'class' => UserStatus::class,

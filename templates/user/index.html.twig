@@ -54,14 +54,14 @@
                             {% if user.role %}
                                 {# choisir la couleur du badge en fonction du rôle #}
                                 {% set badge_class =
-                                    user.role == 'ADMIN'       ? 'danger'  :
-                                    (user.role == 'HR_MANAGER' ? 'warning' :
-                                    (user.role == 'TEAM_MANAGER' ? 'info'  :
-                                    (user.role == 'EMPLOYEE'   ? 'secondary' : 'primary')))
+                                    user.role.value == 'ADMIN'       ? 'danger'  :
+                                    (user.role.value == 'HR_MANAGER' ? 'warning' :
+                                    (user.role.value == 'TEAM_MANAGER' ? 'info'  :
+                                    (user.role.value == 'EMPLOYEE'   ? 'secondary' : 'primary')))
                                 %}
 
                                 <span class="badge bg-{{ badge_class }}">
-        {{ user.role }}
+        {{ user.role.value }}
     </span>
                             {% endif %}
 
